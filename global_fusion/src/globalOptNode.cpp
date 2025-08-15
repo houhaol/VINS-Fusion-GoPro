@@ -23,6 +23,7 @@
 #include <fstream>
 #include <queue>
 #include <mutex>
+#include <opencv2/opencv.hpp>
 
 GlobalOptimization globalEstimator;
 ros::Publisher pub_global_odometry, pub_global_path, pub_car;
@@ -30,6 +31,8 @@ nav_msgs::Path *global_path;
 double last_vio_t = -1;
 std::queue<sensor_msgs::NavSatFixConstPtr> gpsQueue;
 std::mutex m_buf;
+
+std::string OUTPUT_FOLDER;
 
 void publish_car_model(double t, Eigen::Vector3d t_w_car, Eigen::Quaterniond q_w_car)
 {
@@ -143,8 +146,8 @@ void vio_callback(const nav_msgs::Odometry::ConstPtr &pose_msg)
 
 
     // write result to file
-    std::ofstream foutC("/home/tony-ws1/output/vio_global.csv", ios::app);
-    foutC.setf(ios::fixed, ios::floatfield);
+    std::ofstream foutC(OUTPUT_FOLDER + "/vio_global.csv", std::ios::app);
+    foutC.setf(std::ios::fixed, std::ios::floatfield);
     foutC.precision(0);
     foutC << pose_msg->header.stamp.toSec() * 1e9 << ",";
     foutC.precision(5);
@@ -154,7 +157,7 @@ void vio_callback(const nav_msgs::Odometry::ConstPtr &pose_msg)
             << global_q.w() << ","
             << global_q.x() << ","
             << global_q.y() << ","
-            << global_q.z() << endl;
+            << global_q.z() << std::endl;
     foutC.close();
 }
 
@@ -163,6 +166,20 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "globalEstimator");
     ros::NodeHandle n("~");
 
+    if(argc != 2) {
+        printf("please input: rosrun global_fusion globalOptNode [config file]\n");
+        return 1;
+    }
+    std::string config_file = argv[1];
+    
+    cv::FileStorage fsSettings(config_file, cv::FileStorage::READ);
+    if (!fsSettings.isOpened()) {
+        std::cerr << "ERROR: Wrong path to settings" << std::endl;
+    }
+    fsSettings["output_path"] >> OUTPUT_FOLDER;
+    fsSettings.release();
+    
+    
     global_path = &globalEstimator.global_path;
 
     ros::Subscriber sub_GPS = n.subscribe("/gps", 100, GPS_callback);

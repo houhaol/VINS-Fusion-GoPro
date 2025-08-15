@@ -1,0 +1,71 @@
+%YAML:1.0
+
+#common parameters
+#support: 1 imu 1 cam; 1 imu 2 cam: 2 cam; 
+imu: 1         
+num_of_cam: 1  
+
+imu_topic: "/gopro/imu"
+image0_topic: "/gopro/image_raw"
+#image1_topic: "/cam1/image_raw"
+output_path: "/home/houhao/output/"
+
+cam0_calib: "cam0_pinhole_gopro.yaml"
+#cam1_calib: "cam1_mei.yaml"
+image_width: 1920
+image_height: 1080
+   
+
+# Extrinsic parameter between IMU and Camera.
+estimate_extrinsic: 0   # 0  Have an accurate extrinsic parameters. We will trust the following imu^R_cam, imu^T_cam, don't change it.
+                        # 1  Have an initial guess about extrinsic parameters. We will optimize around your initial guess.
+
+body_T_cam0: !!opencv-matrix
+   rows: 4
+   cols: 4
+   dt: d
+   data: [ 
+#-0.99997317,  0.00180005, -0.0071001,  -0.00272884,
+#       0.00709057, -0.00525106, -0.99996107, -0.0313361,
+#      -0.00183726, -0.99998459,  0.00523816, -0.00371908,
+#       0.0,         0.0,         0.0,         1.0]
+          -9.999742201864993962e-01, 6.808434491051965076e-03, 2.281267670362305180e-03, 3.950364977740616207e-02,
+          -2.271525241540179717e-03, 1.438325230881116155e-03, -9.999963856902722714e-01, -5.322564193885059858e-02,
+          -6.811691088109627160e-03, -9.999757879270436689e-01, -1.422822620323165900e-03, 1.597042539782938045e-02,
+          0.000000000000000000e+00, 0.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00]
+
+#Multiple thread support
+multiple_thread: 1
+
+#feature traker paprameters
+max_cnt: 150            # max feature number in feature tracking
+min_dist: 30            # min distance between two features 
+freq: 0 #10                # frequence (Hz) of publish tracking result. At least 10Hz for good estimation. If set 0, the frequence will be same as raw image 
+F_threshold: 1.0        # ransac threshold (pixel)
+show_track: 1           # publish tracking image as topic
+flow_back: 1            # perform forward and backward optical flow to improve feature tracking accuracy
+
+#optimization parameters
+max_solver_time: 0.1 #0.04  # max solver itration time (ms), to guarantee real time
+max_num_iterations: 8 #8   # max solver itrations, to guarantee real time
+keyframe_parallax: 10.0 #10.0 # keyframe selection threshold (pixel)
+
+#imu parameters       The more accurate parameters you provide, the better performance
+acc_n: 0.00713 #0.1          # accelerometer measurement noise standard deviation. 
+gyr_n: 0.000828 #0.01         # gyroscope measurement noise standard deviation.     
+acc_w: 0.001 #0.001        # accelerometer bias random work noise standard deviation.  
+gyr_w: 0.0001 #0.0001       # gyroscope bias random work noise standard deviation.     
+#acc_n: 6.344817162e-03
+#gyr_n: 5.372886565e-04 
+#acc_w: 1.162489501e-03
+#gyr_w: 1.767131384e-04 
+g_norm: 9.7804     # gravity magnitude
+
+#unsynchronization parameters
+estimate_td: 1                      # online estimate time offset between camera and imu
+td: 0.0                             # initial value of time offset. unit: s. readed image clock + td = real image clock (IMU clock)
+
+#loop closure parameters
+load_previous_pose_graph: 0        # load and reuse previous pose graph; load from 'pose_graph_save_path'
+pose_graph_save_path: "/home/houhao/output/pose_graph/" # save and load path
+save_image: 1                   # save image in pose graph for visualization prupose; you can close this function by setting 0

@@ -62,3 +62,7 @@ target_link_libraries(kitti_odom_test vins_lib)
 add_executable(kitti_gps_test src/KITTIGPSTest.cpp)
 target_link_libraries(kitti_gps_test vins_lib) 
 
+catkin_install_python(PROGRAMS
+  scripts/save_global_path_to_csv.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)

@@ -1,0 +1,18 @@
+<launch>
+        <!-- Parameters -->
+        <arg name="use_loop_fusion" default="false" />
+        <arg name="use_global_fusion" default="false" />
+        <arg name="config_yaml" default="/home/houhao/catkin_ws/src/VINS-Fusion/config/gopro/gopro_euroc_mono_imu_config.yaml" />
+
+        <!-- Start VINS node -->
+        <node pkg="vins" type="vins_node" name="vins_node" output="screen" args="$(arg config_yaml)" />
+
+        <!-- Launch RViz -->
+        <include file="$(find vins)/launch/vins_rviz.launch" />
+
+        <!-- Start global_fusion node -->
+        <node pkg="global_fusion" type="global_fusion_node" name="global_fusion_node" output="screen" if="$(arg use_global_fusion)" args="$(arg config_yaml)"/>
+
+        <!-- Start loop_fusion node if enabled -->
+        <node pkg="loop_fusion" type="loop_fusion_node" name="loop_fusion_node" if="$(arg use_loop_fusion)" args="$(arg config_yaml)"/>
+</launch>

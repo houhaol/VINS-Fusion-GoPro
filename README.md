@@ -1,4 +1,33 @@
 # VINS-Fusion
+## Modification for GoPro and gps integration
+### GoPro Data Preparation
+For file chaptering, use this tool https://github.com/gyroflow/mp4-merge?tab=readme-ov-file to merge them as one. It can run in local win pc before transfering the file to slam pc. \
+
+Run https://github.com/AutonomousFieldRoboticsLab/gopro_ros to convert gopro video to rosbag. Something like. 
+```
+source ~/gopro_ws/devel/setup.bash
+roslaunch gopro_ros gopro_to_rosbag.launch gopro_video:=/Datasets/BF002/BF002_gopro_merge.MP4 rosbag:=/Datasets/BF002/BF002_gopro_merge.bag compressed_image_format:=false scale:=1 grayscale:=true
+```
+
+### GPS Data Preparation (Optional)
+Use `prepare_scripts/rosbag_from_gps_csv.py' to write gps rosbag file from iphone or columbus recorded GPS data
+
+### Run
+Check `/gopro_calibration_vins_setup/README.md` for GoPro Calibration and vins docker setup. \
+Run the launch file after all set
+```
+roslaunch vins_estimator befit_global_loop.launch config_yaml:=/path/to/config.yaml use_loop_fusion:=false use_global_fusion:=true
+
+rosbag play gopro.bag gps.bag -u duration
+
+# Record the last msg from /globalEstimator/global_path, which is the trajectory of gps-fused trajectory. 
+rosrun vins_estimator save_global_path_to_csv.py --output /path/to/my_trajectory.csv
+```
+
+### Trajectory output
+Specify the outout dir in config file. One file is `vio.csv`, recording the trajectory from /vins_estimator/odometry. One file is `vio_loop.csv`, if loop detection enabled. One file is `vio_global.csv`, recording the odometry trajectory from /globalEstimator/global_odometry.\
+Run `prepare_scripts/convert_csv_to_tum.py`, converting csv to tum format txt to be visualized using `evo_traj tum path/to/traject/txtfile --plot --plot_mode=xy --save_plot path/to/save/traj/file`
+
 ## An optimization-based multi-sensor state estimator
 
 <img src="https://github.com/HKUST-Aerial-Robotics/VINS-Fusion/blob/master/support_files/image/vins_logo.png" width = 55% height = 55% div align=left />
