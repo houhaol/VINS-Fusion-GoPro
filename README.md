@@ -10,7 +10,7 @@ roslaunch gopro_ros gopro_to_rosbag.launch gopro_video:=/Datasets/BF002/BF002_go
 ```
 
 ### GPS Data Preparation (Optional)
-Use `prepare_scripts/rosbag_from_gps_csv.py' to write gps rosbag file from iphone or columbus recorded GPS data
+Use `prepare_scripts/rosbag_from_gps_csv.py` to write gps rosbag file from iphone or columbus recorded GPS data
 
 ### Run
 Check `/gopro_calibration_vins_setup/README.md` for GoPro Calibration and vins docker setup. \
