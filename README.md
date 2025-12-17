@@ -1,9 +1,9 @@
 # VINS-Fusion
 ## Modification for GoPro and gps integration
 ### GoPro Data Preparation
-For file chaptering, use this tool https://github.com/gyroflow/mp4-merge?tab=readme-ov-file to merge them as one. It can run in local win pc before transfering the file to slam pc. \
+For GoPro file chaptering, use this tool https://github.com/gyroflow/mp4-merge?tab=readme-ov-file to merge them as one. It can run in local win pc before transfering the file to slam pc. 
 
-Run https://github.com/AutonomousFieldRoboticsLab/gopro_ros to convert gopro video to rosbag. Something like. 
+Checkout https://github.com/AutonomousFieldRoboticsLab/gopro_ros to convert gopro video to rosbag. Something like. 
 ```
 source ~/gopro_ws/devel/setup.bash
 roslaunch gopro_ros gopro_to_rosbag.launch gopro_video:=/Datasets/BF002/BF002_gopro_merge.MP4 rosbag:=/Datasets/BF002/BF002_gopro_merge.bag compressed_image_format:=false scale:=1 grayscale:=true
