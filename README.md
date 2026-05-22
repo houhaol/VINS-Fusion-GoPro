@@ -6,34 +6,41 @@ For GoPro file chaptering, use this tool https://github.com/gyroflow/mp4-merge?t
 Checkout https://github.com/AutonomousFieldRoboticsLab/gopro_ros to convert gopro video to rosbag. Something like. 
 ```
 source ~/gopro_ws/devel/setup.bash
-roslaunch gopro_ros gopro_to_rosbag.launch gopro_video:=/Datasets/BF002/BF002_gopro_merge.MP4 rosbag:=/Datasets/BF002/BF002_gopro_merge.bag compressed_image_format:=false scale:=1 grayscale:=true
+roslaunch gopro_ros gopro_to_rosbag.launch gopro_video:=/path/to/gopro_video.MP4 rosbag:=/path/to/output_gopro_merge.bag compressed_image_format:=false scale:=1 grayscale:=true
 ```
 
 ### GPS Data Preparation (Optional)
-Use `misc_scripts/rosbag_from_gps_csv.py` to write gps rosbag file from iphone or columbus recorded GPS data
+Check out `misc_scripts/rosbag_from_gps_csv.py` to write gps rosbag file from iphone or columbus recorded GPS data
 
 ### Run
-Check `/gopro_calibration_vins_setup/README.md` for GoPro Calibration and vins docker setup. \
+Check out `/gopro_calibration_vins_setup/README.md` for GoPro Calibration and vins docker setup. \
 Run the launch file after all set
 ```
-roslaunch vins_estimator befit_global_loop.launch config_yaml:=/path/to/config.yaml use_loop_fusion:=false use_global_fusion:=true
-or 
 roslaunch vins befit_global_loop.launch config_yaml:=/root/catkin_ws/src/VINS-Fusion/config/euroc/gopro_euroc_mono_imu_config.yaml use_loop_fusion:=false use_global_fusion:=true
 
+# New terminal to run
 rosbag play gopro.bag gps.bag -u duration
-
-rosrun odom_logger save_global_path_to_csv.py --output path/to/slam_gps.csv
 ```
 
 ### Trajectory output
-Specify the outout dir in config file. One file is `vio.csv`, recording the trajectory from /vins_estimator/odometry. One file is `vio_loop.csv`, if loop detection enabled. One file is `vio_global.csv`, recording the odometry trajectory from /globalEstimator/global_odometry.\
+Check out and install odom_logger rospackage and new terminal to run
+```
+rosrun odom_logger save_global_path_to_csv.py --output path/to/slam_gps.csv
+```
+
+Specify the outout dir in config file. One file is `vio.csv`, recording the trajectory from /vins_estimator/odometry. One file is `vio_loop.csv`, if loop detection enabled. One file is `vio_global.csv`, recording the odometry trajectory from /globalEstimator/global_odometry.
+
 Run `misc_scripts/convert_csv_to_tum.py`, converting csv to tum format txt to be visualized using `evo_traj tum path/to/traject/txtfile --plot --plot_mode=xy --save_plot path/to/save/traj/file`
 
 ### Anchor trajectory with GPS
 ```
+# specify the time window with strong and precise GPS datapoints
 python misc_scripts/slam_to_gps.py --traj slam_traj_01.txt --gps-csv gps.csv --output aligned_traj_01.gpx --window 0,100,400,1000
 ```
 
+---
+
+# Repo from VINS
 ## An optimization-based multi-sensor state estimator
 
 <img src="https://github.com/HKUST-Aerial-Robotics/VINS-Fusion/blob/master/support_files/image/vins_logo.png" width = 55% height = 55% div align=left />
