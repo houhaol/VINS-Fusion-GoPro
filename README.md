@@ -23,7 +23,7 @@ rosbag play gopro.bag gps.bag -u duration
 ```
 
 ### Trajectory output
-Check out and install odom_logger rospackage and new terminal to run
+Check out [odom logger package](https://github.com/houhaol/odom_logger.git) and install odom_logger rospackage and new terminal to run
 ```
 rosrun odom_logger save_global_path_to_csv.py --output path/to/slam_gps.csv
 ```
